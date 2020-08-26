@@ -65,12 +65,11 @@ public class User {
         User user = (User) o;
         return id == user.id &&
                 password == user.password &&
-                Objects.equals(login, user.login) &&
-                Objects.equals(date, user.date);
+                Objects.equals(login, user.login);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, login, password, date);
+        return Objects.hash(id, login, password);
     }
 }

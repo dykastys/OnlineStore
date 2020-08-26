@@ -23,6 +23,9 @@ public class Product {
     }
 
     public void setId(int id) {
+        if(id <= 0) {
+            throw new IllegalArgumentException();
+        }
         this.id = id;
     }
 
@@ -31,7 +34,7 @@ public class Product {
     }
 
     public void setName(String name) {
-        if(name == null || name.isEmpty()) {
+        if(name == null || name.trim().isEmpty()) {
             throw new IllegalArgumentException();
         }
         this.name = name;
@@ -42,7 +45,7 @@ public class Product {
     }
 
     public void setMaker(String maker) {
-        if(maker == null || maker.isEmpty()) {
+        if(maker == null || maker.trim().isEmpty()) {
             throw new IllegalArgumentException();
         }
         this.maker = maker;
@@ -64,7 +67,7 @@ public class Product {
     }
 
     public void setPrice(long price) {
-        if(price <= 0) {
+        if(price < 0) {
             throw new IllegalArgumentException();
         }
         this.price = price;

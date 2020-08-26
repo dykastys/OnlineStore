@@ -12,6 +12,9 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
+import static ru.kush.path_helper.ConstantsForPathsToJsp.SOMETHING_WRONG_JSP;
+import static ru.kush.path_helper.ConstantsForPathsToJsp.UPDATE_USER_JSP;
+
 public class UserUpdateController extends HttpServlet {
 
     @EJB
@@ -19,7 +22,7 @@ public class UserUpdateController extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        req.getRequestDispatcher("/jsp/update_user.jsp").forward(req, resp);
+        req.getRequestDispatcher(UPDATE_USER_JSP).forward(req, resp);
     }
 
     @Override
@@ -34,12 +37,12 @@ public class UserUpdateController extends HttpServlet {
                 updater.tryToUpdateAccount(user, login, password1, password2, req);
             } catch (AppException nop) {
                 // TODO: 26.08.2020 log
-                req.getRequestDispatcher("/jsp/errors/somethingWrong.jsp").forward(req, resp);
+                req.getRequestDispatcher(SOMETHING_WRONG_JSP).forward(req, resp);
                 return;
             }
-            req.getRequestDispatcher("/jsp/update_user.jsp").forward(req, resp);
+            req.getRequestDispatcher(UPDATE_USER_JSP).forward(req, resp);
             return;
         }
-        req.getRequestDispatcher("/jsp/errors/somethingWrong.jsp").forward(req, resp);
+        req.getRequestDispatcher(SOMETHING_WRONG_JSP).forward(req, resp);
     }
 }

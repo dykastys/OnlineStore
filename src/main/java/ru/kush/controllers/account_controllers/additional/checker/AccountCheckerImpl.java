@@ -1,5 +1,6 @@
-package ru.kush.controllers.account_controllers.additional;
+package ru.kush.controllers.account_controllers.additional.checker;
 
+import ru.kush.controllers.account_controllers.additional.MessageMaker;
 import ru.kush.dao.DaoUser;
 import ru.kush.dao.exceptions.AppException;
 import ru.kush.entities.User;
@@ -9,7 +10,7 @@ import javax.ejb.Singleton;
 import javax.servlet.http.HttpServletRequest;
 
 @Singleton
-public class AccountChecker {
+public class AccountCheckerImpl implements Checker {
 
     @EJB
     private DaoUser daoUser;
@@ -17,6 +18,7 @@ public class AccountChecker {
     @EJB
     private MessageMaker messageMaker;
 
+    @Override
     public boolean authorizationDataIsNotValid(String login, String password, HttpServletRequest req) throws AppException {
         if(loginOrPassIsEmpty(login, password) || loginOrPasswordIsNotValid(login, password)) {
             req.setAttribute("error", messageMaker.getErrorMessages());
@@ -25,6 +27,7 @@ public class AccountChecker {
         return false;
     }
 
+    @Override
     public boolean creationDataIsNotValid(String login, String password1, String password2, HttpServletRequest req) throws AppException {
         boolean isEmpty = loginIsEmpty(login) || passwordIsEmpty(password1) || passwordIsEmpty(password2);
         boolean isNotValid = loginNotValidForCreation(login) || passwordsIsNotEquals(password1.hashCode(), password2.hashCode());

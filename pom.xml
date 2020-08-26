@@ -14,7 +14,8 @@
         <jvm.version>1.8</jvm.version>
         <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
 
-        <JavaEE.version>8.0.1</JavaEE.version>
+        <servlet.version>4.0.1</servlet.version>
+        <ejb.version>2.0.0.Final</ejb.version>
         <jstl.version>1.2</jstl.version>
 
         <jdbc.version>9.1-901-1.jdbc4</jdbc.version>
@@ -28,9 +29,15 @@
 
         <!-- Servlets, EJB, jstl -->
         <dependency>
-            <groupId>javax</groupId>
-            <artifactId>javaee-api</artifactId>
-            <version>${JavaEE.version}</version>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>${servlet.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.spec.javax.ejb</groupId>
+            <artifactId>jboss-ejb-api_3.2_spec</artifactId>
+            <version>${ejb.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

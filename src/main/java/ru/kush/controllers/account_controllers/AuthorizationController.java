@@ -1,6 +1,6 @@
 package ru.kush.controllers.account_controllers;
 
-import ru.kush.controllers.account_controllers.additional.AccountChecker;
+import ru.kush.controllers.account_controllers.additional.checker.Checker;
 import ru.kush.dao.exceptions.AppException;
 import ru.kush.entities.User;
 
@@ -11,14 +11,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+import static ru.kush.path_helper.ConstantsForPathsToJsp.*;
+
 public class AuthorizationController extends HttpServlet {
 
     @EJB
-    private AccountChecker checker;
+    Checker checker;
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        req.getRequestDispatcher("/jsp/login.jsp").forward(req, resp);
+        req.getRequestDispatcher(LOGIN_JSP).forward(req, resp);
     }
 
     @Override
@@ -27,16 +29,16 @@ public class AuthorizationController extends HttpServlet {
         String password = req.getParameter("password");
         try {
             if(checker.authorizationDataIsNotValid(login, password, req)) {
-                req.getRequestDispatcher("/jsp/login.jsp").forward(req, resp);
+                req.getRequestDispatcher(LOGIN_JSP).forward(req, resp);
                 return;
             }
         }catch (AppException e) {
             // TODO: 25.08.2020 log
-            req.getRequestDispatcher("/jsp/errors/somethingWrong.jsp").forward(req, resp);
+            req.getRequestDispatcher(SOMETHING_WRONG_JSP).forward(req, resp);
             return;
         }
         User user = new User(login, password.hashCode());
         req.getSession(true).setAttribute("user", user);
-        req.getRequestDispatcher("/index.jsp").forward(req, resp);
+        req.getRequestDispatcher(MAIN_PAGE_JSP).forward(req, resp);
     }
 }
