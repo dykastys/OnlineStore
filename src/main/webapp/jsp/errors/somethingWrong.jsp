@@ -1,11 +1,11 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <html>
 <head>
-    <title>error</title>
+    <title>wrong</title>
 </head>
 <body>
     <header>
-        <h1>This page isn't exist</h1>
+        <h1>Something went wrong</h1>
     </header>
     <div>
         <a href="${pageContext.request.contextPath}/">

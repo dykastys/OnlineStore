@@ -1,5 +1,5 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <html>
 <head>
     <title>all_products</title>
@@ -46,5 +46,13 @@
             </c:forEach>
         </c:otherwise>
     </c:choose>
+
+    <br/>
+    <br/>
+    <br/>
+
+    <footer>
+        <a href="${pageContext.request.contextPath}/">main page</a>
+    </footer>
 </body>
 </html>

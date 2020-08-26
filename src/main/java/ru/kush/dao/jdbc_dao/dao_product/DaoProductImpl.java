@@ -31,7 +31,7 @@ public class DaoProductImpl implements DaoProduct {
                 this.baseSize.incrementAndGet();
             }
         }catch (SQLException | AppException e) {
-            throw new AppException(e.getMessage());
+            throw new AppException(e.getMessage(), e);
         }
     }
 
@@ -43,7 +43,7 @@ public class DaoProductImpl implements DaoProduct {
             statement.setInt(1, id);
             return getListFromResultSet(statement.executeQuery()).get(0);
         }catch (SQLException | IndexOutOfBoundsException e) {
-            throw new AppException(e.getMessage());
+            throw new AppException(e.getMessage(), e);
         }
     }
 
@@ -57,7 +57,7 @@ public class DaoProductImpl implements DaoProduct {
             ResultSet resultSet = statement.executeQuery();
             return getListFromResultSet(resultSet);
         }catch (SQLException e) {
-            throw new AppException(e.getMessage());
+            throw new AppException(e.getMessage(), e);
         }
     }
 
@@ -71,7 +71,7 @@ public class DaoProductImpl implements DaoProduct {
             ResultSet resultSet = statement.executeQuery();
             return getListFromResultSet(resultSet);
         }catch (SQLException e) {
-            throw new AppException(e.getMessage());
+            throw new AppException(e.getMessage(), e);
         }
     }
 
@@ -87,7 +87,7 @@ public class DaoProductImpl implements DaoProduct {
             ResultSet resultSet = statement.executeQuery();
             return getListFromResultSet(resultSet);
         }catch (SQLException e) {
-            throw new AppException(e.getMessage());
+            throw new AppException(e.getMessage(), e);
         }
     }
 
@@ -100,7 +100,7 @@ public class DaoProductImpl implements DaoProduct {
         try{
             return getAllProducts().subList(begin, end);
         }catch (Exception e) {
-            throw new AppIllegalArgException(e.getMessage());
+            throw new AppIllegalArgException(e.getMessage(), e);
         }
     }
 
@@ -111,7 +111,7 @@ public class DaoProductImpl implements DaoProduct {
             ResultSet resultSet = statement.executeQuery("select * from products");
             return getListFromResultSet(resultSet);
         }catch (SQLException e) {
-            throw new AppException(e.getMessage());
+            throw new AppException(e.getMessage(), e);
         }
     }
 
@@ -129,7 +129,7 @@ public class DaoProductImpl implements DaoProduct {
                     statement.setLong(3, p.getPrice());
                     statement.executeUpdate();
                 }catch (SQLException e) {
-                    throw new AppException(e.getMessage());
+                    throw new AppException(e.getMessage(), e);
                 }
             }
             this.baseSize.decrementAndGet();
@@ -144,7 +144,7 @@ public class DaoProductImpl implements DaoProduct {
             statement.executeUpdate();
             this.baseSize.decrementAndGet();
         }catch (SQLException e) {
-            throw new AppException(e.getMessage());
+            throw new AppException(e.getMessage(), e);
         }
     }
 
@@ -165,7 +165,7 @@ public class DaoProductImpl implements DaoProduct {
             ResultSet resultSet = statement.executeQuery();
             return getListFromResultSet(resultSet).get(0);
         }catch (SQLException | IndexOutOfBoundsException e) {
-            throw new AppException(e.getMessage());
+            throw new AppException(e.getMessage(), e);
         }
     }
 

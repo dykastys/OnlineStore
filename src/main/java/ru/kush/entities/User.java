@@ -22,6 +22,9 @@ public class User {
     }
 
     public void setId(int id) {
+        if(id <= 0) {
+            throw new IllegalArgumentException("id");
+        }
         this.id = id;
     }
 
@@ -30,8 +33,8 @@ public class User {
     }
 
     public void setLogin(String login) {
-        if(login == null || login.isEmpty()) {
-            throw new IllegalArgumentException();
+        if(login == null || login.isEmpty() || login.contains(" ")) {
+            throw new IllegalArgumentException("login");
         }
         this.login = login;
     }
@@ -41,6 +44,9 @@ public class User {
     }
 
     public void setPassword(int password) {
+        if(password <= 0) {
+            throw new IllegalArgumentException("password");
+        }
         this.password = password;
     }
 
@@ -66,15 +72,5 @@ public class User {
     @Override
     public int hashCode() {
         return Objects.hash(id, login, password, date);
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", login='" + login + '\'' +
-                ", password=" + password +
-                ", date=" + date +
-                '}';
     }
 }

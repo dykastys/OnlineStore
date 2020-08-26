@@ -1,22 +1,26 @@
 package ru.kush.dao.jdbc_dao.dao_user;
 
 import ru.kush.dao.DaoUser;
+import ru.kush.dao.exceptions.AppException;
+import ru.kush.dao.exceptions.AppIllegalArgException;
 import ru.kush.dao.jdbc_dao.JdbcWorker;
 import ru.kush.entities.User;
 
 import javax.ejb.EJB;
+import javax.ejb.Singleton;
 import java.sql.*;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+@Singleton
 public class DaoUserImpl implements DaoUser {
 
     @EJB
     private JdbcWorker worker;
 
     @Override
-    public void insertUser(User user) {
+    public void insertUser(User user) throws AppException {
         try(Connection connection = worker.getNewConnection();
             PreparedStatement statement = connection.prepareStatement(
                     "insert into users (login, password, date) " +
@@ -26,64 +30,64 @@ public class DaoUserImpl implements DaoUser {
             statement.setDate(3, new java.sql.Date(user.getDate().getTime()));
             statement.executeUpdate();
         }catch (SQLException e) {
-            e.printStackTrace();
+            throw new AppException(e.getMessage(), e);
         }
     }
 
     @Override
-    public void updateLogin(User user, String newLogin) throws IllegalArgumentException{
+    public void updateLogin(User user, String newLogin) throws AppException {
         if(getUserByName(newLogin) == null) {
             try(Connection connection = worker.getNewConnection();
                 PreparedStatement statement = connection.prepareStatement("update users set login=? where login=?")) {
                 statement.setString(1, newLogin);
                 statement.setString(2, user.getLogin());
                 statement.executeUpdate();
+                user.setLogin(newLogin);
             }catch (SQLException e) {
-                e.printStackTrace();
+                throw new AppException(e.getMessage(), e);
             }
         }else{
-            throw new IllegalArgumentException();
+            throw new AppIllegalArgException("this login already taken");
         }
     }
 
     @Override
-    public void updatePassword(User user, int password) {
+    public void updatePassword(User user, int password) throws AppException {
         try(Connection connection = worker.getNewConnection();
             PreparedStatement statement = connection.prepareStatement("update users set password=? where login=?")) {
             statement.setInt(1, password);
             statement.setString(2, user.getLogin());
             statement.executeUpdate();
+            user.setPassword(password);
         }catch (SQLException e) {
-            e.printStackTrace();
+            throw new AppException(e.getMessage(), e);
         }
     }
 
     @Override
-    public Set<User> getAllUsers() {
+    public Set<User> getAllUsers() throws AppException {
         try(Connection connection = worker.getNewConnection();
             PreparedStatement statement = connection.prepareStatement("select * from users")) {
             return getSetFromResultSet(statement.executeQuery());
         }catch (SQLException e) {
-            e.printStackTrace();
+            throw new AppException(e.getMessage(), e);
         }
-        return null;
     }
 
     @Override
-    public User getUserByName(String login) {
+    public User getUserByName(String login) throws AppException {
         try(Connection connection = worker.getNewConnection();
             PreparedStatement statement = connection.prepareStatement("" +
                     "select * from users where login=?")) {
             statement.setString(1, login);
             return getUserFromResultSet(statement.executeQuery());
         }catch (SQLException e) {
-            e.printStackTrace();
+            throw new AppException(e.getMessage(), e);
         }
-        return null;
     }
 
     @Override
-    public Set<User> getUsersByDateRange(Date begin, Date end) {
+    public Set<User> getUsersByDateRange(Date begin, Date end) throws AppException {
         try(Connection connection = worker.getNewConnection();
             PreparedStatement statement = connection.prepareStatement(
                     "select * from users where date>=? and date<=?")) {
@@ -91,9 +95,13 @@ public class DaoUserImpl implements DaoUser {
             statement.setDate(2, new java.sql.Date(end.getTime()));
             return getSetFromResultSet(statement.executeQuery());
         }catch (SQLException e) {
-            e.printStackTrace();
+            throw new AppException(e.getMessage(), e);
         }
-        return null;
+    }
+
+    @Override
+    public boolean contains(String userName) throws AppException {
+        return getUserByName(userName) != null;
     }
 
     private Set<User> getSetFromResultSet(ResultSet resultSet) throws SQLException {
@@ -122,14 +130,14 @@ public class DaoUserImpl implements DaoUser {
     }
 
     @Override
-    public void deleteUser(User user) {
+    public void deleteUser(User user) throws AppException {
         try(Connection connection = worker.getNewConnection();
             PreparedStatement statement = connection.prepareStatement(
                                     "delete from users where login=?")) {
             statement.setString(1, user.getLogin());
             statement.executeUpdate();
         }catch (SQLException e) {
-            e.printStackTrace();
+            throw new AppException(e.getMessage(), e);
         }
     }
 }

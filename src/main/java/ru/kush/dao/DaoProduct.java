@@ -3,9 +3,7 @@ package ru.kush.dao;
 import ru.kush.dao.exceptions.AppException;
 import ru.kush.entities.Product;
 
-import java.sql.SQLException;
 import java.util.List;
-import java.util.Map;
 
 public interface DaoProduct {
 
