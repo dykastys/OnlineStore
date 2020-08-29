@@ -1,6 +1,6 @@
-package ru.kush.controllers.account_controllers.additional;
+package ru.kush.controllers.account_controllers.additional.updater;
 
-import ru.kush.controllers.account_controllers.additional.message_maker.MessageMakerImpl;
+import ru.kush.controllers.account_controllers.additional.message_maker.MessageMaker;
 import ru.kush.dao.DaoUser;
 import ru.kush.dao.exceptions.AppException;
 import ru.kush.dao.exceptions.AppSystemError;
@@ -11,14 +11,15 @@ import javax.ejb.Singleton;
 import javax.servlet.http.HttpServletRequest;
 
 @Singleton
-public class AccountUpdater {
+public class AccountUpdaterImpl implements AccountUpdater {
 
     @EJB
-    private DaoUser daoUser;
+    DaoUser daoUser;
 
     @EJB
-    private MessageMakerImpl messageMaker;
+    MessageMaker messageMaker;
 
+    @Override
     public void tryToUpdateAccount(User user, String login, String pass1, String pass2, HttpServletRequest req) throws AppException {
         checkAndUpdateLogin(user, login);
         checkAndUpdatePassword(user, pass1, pass2);
@@ -27,7 +28,8 @@ public class AccountUpdater {
     }
 
     private void checkAndUpdateLogin(User user, String login) throws AppException {
-        if(user == null || login == null || login.contains(" ") || user.getLogin().equals(login)) {
+        if(user == null || login == null || login.isEmpty() || login.contains(" ") ||
+                user.getLogin().equals(login)) {
             messageMaker.appendToError("login cannot be changed");
             return;
         }else if(daoUser.contains(login)) {
@@ -48,6 +50,7 @@ public class AccountUpdater {
 
     private void checkAndUpdatePassword(User user, String pass1, String pass2) throws AppSystemError {
         if(user == null || pass1 == null || pass2 == null ||
+                pass1.isEmpty() || pass2.isEmpty() ||
                     pass1.contains(" ") || pass2.contains(" ") ||
                         !pass1.equals(pass2) || user.getPassword()==pass1.hashCode()) {
             messageMaker.appendToError("password cannot be changed");

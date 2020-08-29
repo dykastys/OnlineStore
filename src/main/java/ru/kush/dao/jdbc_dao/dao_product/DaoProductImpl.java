@@ -3,7 +3,7 @@ package ru.kush.dao.jdbc_dao.dao_product;
 import ru.kush.dao.DaoProduct;
 import ru.kush.dao.exceptions.AppException;
 import ru.kush.dao.exceptions.AppIllegalArgException;
-import ru.kush.dao.jdbc_dao.JdbcWorker;
+import ru.kush.dao.jdbc_dao.worker.JdbcWorkerImpl;
 import ru.kush.entities.Product;
 
 import javax.ejb.EJB;
@@ -18,7 +18,7 @@ public class DaoProductImpl implements DaoProduct {
     private final AtomicInteger baseSize = new AtomicInteger(12);
 
     @EJB
-    private JdbcWorker worker;
+    private JdbcWorkerImpl worker;
 
     @Override
     public void insertOrUpdateProduct(Product product) throws AppException {

@@ -3,7 +3,7 @@ package ru.kush.dao.jdbc_dao.dao_user;
 import ru.kush.dao.DaoUser;
 import ru.kush.dao.exceptions.AppException;
 import ru.kush.dao.exceptions.AppIllegalArgException;
-import ru.kush.dao.jdbc_dao.JdbcWorker;
+import ru.kush.dao.jdbc_dao.worker.JdbcWorker;
 import ru.kush.entities.User;
 
 import javax.ejb.EJB;
@@ -17,7 +17,7 @@ import java.util.Set;
 public class DaoUserImpl implements DaoUser {
 
     @EJB
-    private JdbcWorker worker;
+    JdbcWorker worker;
 
     @Override
     public void insertUser(User user) throws AppException {

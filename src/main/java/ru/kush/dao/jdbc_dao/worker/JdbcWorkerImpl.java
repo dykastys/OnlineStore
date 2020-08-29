@@ -1,4 +1,4 @@
-package ru.kush.dao.jdbc_dao;
+package ru.kush.dao.jdbc_dao.worker;
 
 import javax.ejb.Singleton;
 import java.io.IOException;
@@ -8,7 +8,7 @@ import java.sql.SQLException;
 import java.util.Properties;
 
 @Singleton
-public class JdbcWorker {
+public class JdbcWorkerImpl implements JdbcWorker {
     private final String url;
     private final String userName;
     private final String userPassword;
@@ -16,7 +16,7 @@ public class JdbcWorker {
     {
         Properties properties = new Properties();
         try {
-            properties.load(JdbcWorker.class.getClassLoader().getResourceAsStream("accessToDataBase.properties"));
+            properties.load(JdbcWorkerImpl.class.getClassLoader().getResourceAsStream("accessToDataBase.properties"));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -26,6 +26,7 @@ public class JdbcWorker {
     }
 
 
+    @Override
     public Connection getNewConnection() throws SQLException {
         return DriverManager.getConnection(this.url, this.userName, this.userPassword);
     }

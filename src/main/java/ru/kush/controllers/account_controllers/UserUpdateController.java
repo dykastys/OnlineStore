@@ -1,6 +1,6 @@
 package ru.kush.controllers.account_controllers;
 
-import ru.kush.controllers.account_controllers.additional.AccountUpdater;
+import ru.kush.controllers.account_controllers.additional.updater.AccountUpdater;
 import ru.kush.dao.exceptions.AppException;
 import ru.kush.entities.User;
 
@@ -18,7 +18,7 @@ import static ru.kush.controllers.path_helper.ConstantsForPathsToJsp.UPDATE_USER
 public class UserUpdateController extends HttpServlet {
 
     @EJB
-    private AccountUpdater updater;
+    AccountUpdater updater;
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
