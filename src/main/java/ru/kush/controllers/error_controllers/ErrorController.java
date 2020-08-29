@@ -1,4 +1,4 @@
-package ru.kush.controllers.error;
+package ru.kush.controllers.error_controllers;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;

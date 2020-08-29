@@ -79,7 +79,7 @@
     </servlet-mapping>
     <servlet>
         <servlet-name>errorServlet</servlet-name>
-        <servlet-class>ru.kush.controllers.error.ErrorController</servlet-class>
+        <servlet-class>ru.kush.controllers.error_controllers.ErrorController</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>errorServlet</servlet-name>

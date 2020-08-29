@@ -1,4 +1,4 @@
-package ru.kush.path_helper;
+package ru.kush.controllers.path_helper;
 
 public class ConstantsForPathsToJsp {
     public static final String MAIN_PAGE_JSP = "/index.jsp";

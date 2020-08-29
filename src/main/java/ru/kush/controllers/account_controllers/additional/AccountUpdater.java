@@ -1,5 +1,6 @@
 package ru.kush.controllers.account_controllers.additional;
 
+import ru.kush.controllers.account_controllers.additional.message_maker.MessageMakerImpl;
 import ru.kush.dao.DaoUser;
 import ru.kush.dao.exceptions.AppException;
 import ru.kush.dao.exceptions.AppSystemError;
@@ -16,7 +17,7 @@ public class AccountUpdater {
     private DaoUser daoUser;
 
     @EJB
-    private MessageMaker messageMaker;
+    private MessageMakerImpl messageMaker;
 
     public void tryToUpdateAccount(User user, String login, String pass1, String pass2, HttpServletRequest req) throws AppException {
         checkAndUpdateLogin(user, login);

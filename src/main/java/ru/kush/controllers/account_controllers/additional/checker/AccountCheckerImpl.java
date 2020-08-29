@@ -1,6 +1,6 @@
 package ru.kush.controllers.account_controllers.additional.checker;
 
-import ru.kush.controllers.account_controllers.additional.MessageMaker;
+import ru.kush.controllers.account_controllers.additional.message_maker.MessageMaker;
 import ru.kush.dao.DaoUser;
 import ru.kush.dao.exceptions.AppException;
 import ru.kush.entities.User;
@@ -13,10 +13,10 @@ import javax.servlet.http.HttpServletRequest;
 public class AccountCheckerImpl implements Checker {
 
     @EJB
-    private DaoUser daoUser;
+    DaoUser daoUser;
 
     @EJB
-    private MessageMaker messageMaker;
+    MessageMaker messageMaker;
 
     @Override
     public boolean authorizationDataIsNotValid(String login, String password, HttpServletRequest req) throws AppException {

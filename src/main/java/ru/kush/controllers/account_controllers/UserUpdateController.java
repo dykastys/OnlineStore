@@ -12,8 +12,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
-import static ru.kush.path_helper.ConstantsForPathsToJsp.SOMETHING_WRONG_JSP;
-import static ru.kush.path_helper.ConstantsForPathsToJsp.UPDATE_USER_JSP;
+import static ru.kush.controllers.path_helper.ConstantsForPathsToJsp.SOMETHING_WRONG_JSP;
+import static ru.kush.controllers.path_helper.ConstantsForPathsToJsp.UPDATE_USER_JSP;
 
 public class UserUpdateController extends HttpServlet {
 

@@ -15,7 +15,7 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
 import static org.mockito.Mockito.*;
-import static ru.kush.path_helper.ConstantsForPathsToJsp.*;
+import static ru.kush.controllers.path_helper.ConstantsForPathsToJsp.*;
 
 public class AuthorizationControllerTest {
 
