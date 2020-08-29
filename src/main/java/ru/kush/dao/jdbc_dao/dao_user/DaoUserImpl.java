@@ -124,6 +124,7 @@ public class DaoUserImpl implements DaoUser {
             user.setLogin(resultSet.getString("login"));
             user.setPassword(resultSet.getInt("password"));
             user.setDate(resultSet.getDate("date"));
+            resultSet.close();
             return user;
         }
         return null;

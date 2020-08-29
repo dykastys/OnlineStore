@@ -44,9 +44,6 @@ public class User {
     }
 
     public void setPassword(int password) {
-        if(password <= 0) {
-            throw new IllegalArgumentException("password");
-        }
         this.password = password;
     }
 

@@ -57,11 +57,6 @@ public class UserTest {
         assertThat(user.getLogin(), is("login"));
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void test_set_negative_password_hash() {
-        user.setPassword(-10);
-    }
-
     @Test
     public void test_set_get_normal_password() {
         int password = "password".hashCode();
