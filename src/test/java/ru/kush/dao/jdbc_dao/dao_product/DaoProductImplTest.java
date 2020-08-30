@@ -340,6 +340,35 @@ public class DaoProductImplTest {
     }
 
     @Test
+    public void test_getBaseSize_dataBase_is_empty() throws SQLException, AppException {
+        when(worker.getNewConnection()).thenReturn(connection);
+        when(connection.createStatement()).thenReturn(statement);
+        when(statement.executeQuery(SELECT_COUNT)).thenReturn(resultSet);
+        when(resultSet.next()).thenReturn(false);
+
+        assertThat(daoProduct.getBaseSize(), is(0));
+
+        verify(resultSet).close();
+        verify(statement).close();
+        verify(connection).close();
+    }
+
+    @Test
+    public void test_getBaseSize_dataBase_size_is_10() throws SQLException, AppException {
+        when(worker.getNewConnection()).thenReturn(connection);
+        when(connection.createStatement()).thenReturn(statement);
+        when(statement.executeQuery(SELECT_COUNT)).thenReturn(resultSet);
+        when(resultSet.next()).thenReturn(true);
+        when(resultSet.getInt("count")).thenReturn(10);
+
+        assertThat(daoProduct.getBaseSize(), is(10));
+
+        verify(resultSet).close();
+        verify(statement).close();
+        verify(connection).close();
+    }
+
+    @Test
     public void test_getListFromResultSet_ok() throws SQLException {
         this.conditionForResultSet_size_1();
         daoProduct.getListFromResultSet(resultSet);

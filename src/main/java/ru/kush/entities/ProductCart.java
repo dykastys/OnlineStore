@@ -13,7 +13,7 @@ public class ProductCart {
     }
 
 
-    //todo need we these methods?
+    //todo do we need these methods?
     /*public void addProductInProdCart(Product product, int quantity) {
         if(this.productCart.containsKey(product)) {
             this.productCart.put(product, (productCart.get(product) + quantity));

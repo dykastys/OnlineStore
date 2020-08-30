@@ -37,7 +37,7 @@
                     </c:when>
                     <c:otherwise>
                         <h3>
-                            <a href="${pageContext.request.contextPath}/user?id=${sessionScope.user.id}">${sessionScope.user.login}</a>
+                            <a href="${pageContext.request.contextPath}/user?name=${sessionScope.user.login}">${sessionScope.user.login}</a>
                         </h3>
                         <form action="${pageContext.request.contextPath}/logout">
                             <label>

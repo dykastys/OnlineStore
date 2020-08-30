@@ -86,19 +86,19 @@ public class AllProductsFilterTest {
     }
     
     @Test
-    public void test_getAvailablePages_1() {
+    public void test_getAvailablePages_1() throws AppException {
         when(daoProduct.getBaseSize()).thenReturn(5);
         assertThat(filter.getAvailablePages().size(), is(1));
     }
 
     @Test
-    public void test_getAvailablePages_2() {
+    public void test_getAvailablePages_2() throws AppException {
         when(daoProduct.getBaseSize()).thenReturn(20);
         assertThat(filter.getAvailablePages().size(), is(2));
     }
 
     @Test
-    public void test_getAvailablePages_3() {
+    public void test_getAvailablePages_3() throws AppException {
         when(daoProduct.getBaseSize()).thenReturn(21);
         assertThat(filter.getAvailablePages().size(), is(3));
     }

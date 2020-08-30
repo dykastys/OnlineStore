@@ -10,15 +10,11 @@ import javax.ejb.EJB;
 import javax.ejb.Singleton;
 import java.sql.*;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static ru.kush.dao.jdbc_dao.dao_product.product_queries.ProductQueriesConstants.*;
 
 @Singleton
 public class DaoProductImpl implements DaoProduct {
-
-    // TODO: 29.08.2020 do right setUp 
-    private final AtomicInteger baseSize = new AtomicInteger(12);
 
     @EJB
     JdbcWorker worker;
@@ -31,7 +27,6 @@ public class DaoProductImpl implements DaoProduct {
                 new UpdateClass().update(connection, updatable, product);
             }else{
                 new UpdateClass().insertProduct(connection, product);
-                this.baseSize.incrementAndGet();
             }
         }catch (SQLException | AppException e) {
             throw new AppException(e.getMessage(), e);
@@ -128,7 +123,6 @@ public class DaoProductImpl implements DaoProduct {
                     throw new AppException(e.getMessage(), e);
                 }
             }
-            this.baseSize.decrementAndGet();
         }
     }
 
@@ -138,7 +132,6 @@ public class DaoProductImpl implements DaoProduct {
             PreparedStatement statement = connection.prepareStatement(DELETE_BY_ID)) {
             statement.setInt(1, id);
             statement.executeUpdate();
-            this.baseSize.decrementAndGet();
         }catch (SQLException e) {
             throw new AppException(e.getMessage(), e);
         }
@@ -150,8 +143,17 @@ public class DaoProductImpl implements DaoProduct {
     }
 
     @Override
-    public int getBaseSize() {
-        return this.baseSize.get();
+    public int getBaseSize() throws AppException {
+        try(Connection connection = worker.getNewConnection();
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(SELECT_COUNT)) {
+            if(resultSet.next()) {
+                return resultSet.getInt("count");
+            }
+            return 0;
+        }catch (SQLException e) {
+            throw new AppException(e.getMessage(), e);
+        }
     }
 
     List<Product> getListFromResultSet(ResultSet resultSet) throws SQLException {

@@ -14,4 +14,5 @@ public class ProductQueriesConstants {
     public static final String SELECT_ALL = "select * from products";
     public static final String DELETE_BY_ID = "delete from products where id = ?";
     public static final String DELETE_PRODUCT = "delete from products where name = ? and maker = ? and price = ?";
+    public static final String SELECT_COUNT = "select count(id) as count from products";
 }

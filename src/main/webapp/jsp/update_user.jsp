@@ -6,9 +6,9 @@
             display: flex;
             justify-content: flex-start;
             background-color: transparent;
-            width: 150px;
+            width: 450px;
             padding: 2em;
-            box-sizing: border-box;
+            box-sizing: content-box;
         }
         .container div {
             background-color: transparent;
@@ -37,11 +37,14 @@
 
     <form action="${pageContext.request.contextPath}/user" method="post">
         <label>
-            <div class="container" style="font-weight: bold">
-                <div>Change login
-                    Old password
-                    New password
-                    Repeat new Password &nbsp;&nbsp;&nbsp;
+            <div class="container">
+                <div>
+                    <b>
+                        <span style="white-space: nowrap">Change login:</span>
+                        <span style="white-space: nowrap">Old password:</span>
+                        <span style="white-space: nowrap">New password:</span>
+                        <span style="white-space: nowrap">Repeat new Password:&nbsp;&nbsp;&nbsp;</span>
+                    </b>
                 </div>
                 <div>
                     <input type="text" name="login" value="enter new login" size="30" maxlength="30">
@@ -49,6 +52,7 @@
                     <input type="text" name="newPassword1" value="enter new password" size="30" maxlength="50">
                     <input type="text" name="newPassword2" value="repeat new password" size="30" maxlength="50">
                 </div>
+                <br/>
                 <input type="submit" value="apply">
             </div>
         </label>

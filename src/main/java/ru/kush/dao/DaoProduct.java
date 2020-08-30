@@ -21,5 +21,5 @@ public interface DaoProduct {
 
     boolean contains(Product product) throws AppException;
 
-    int getBaseSize();
+    int getBaseSize() throws AppException;
 }

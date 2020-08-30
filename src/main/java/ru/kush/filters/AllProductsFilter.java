@@ -40,7 +40,7 @@ public class AllProductsFilter extends AbstractFilter {
         }
     }
 
-    List<Integer> getAvailablePages() {
+    List<Integer> getAvailablePages() throws AppException {
         int countOfPages = daoProduct.getBaseSize()%10 == 0
                 ?
                 daoProduct.getBaseSize() / 10
