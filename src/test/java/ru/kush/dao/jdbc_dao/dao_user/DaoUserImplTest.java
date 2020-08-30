@@ -12,6 +12,7 @@ import java.sql.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.*;
+import static ru.kush.dao.jdbc_dao.dao_user.user_queries.UserQueriesConstants.*;
 
 public class DaoUserImplTest {
 
@@ -21,11 +22,6 @@ public class DaoUserImplTest {
     private Connection connection;
     private PreparedStatement preparedStatement;
     private ResultSet resultSet;
-
-    private final String insert = "insert into users (login, password, date) values (?,?,?)";
-    private final String getUserByLogin = "select * from users where login=?";
-    private final String updateLogin = "update users set login=? where login=?";
-    private final String updatePassword = "update users set password=? where login=?";
 
     @Before
     public void setUp() {
@@ -49,7 +45,7 @@ public class DaoUserImplTest {
     @Test(expected = AppException.class)
     public void test_insertUser_get_statement_failed() throws SQLException, AppException {
         when(worker.getNewConnection()).thenReturn(connection);
-        when(connection.prepareStatement(insert)).thenThrow(new SQLException());
+        when(connection.prepareStatement(INSERT_USER)).thenThrow(new SQLException());
 
         daoUser.insertUser(user);
 
@@ -59,7 +55,7 @@ public class DaoUserImplTest {
     @Test(expected = AppException.class)
     public void test_insertUser_statement_execute_failed() throws SQLException, AppException {
         when(worker.getNewConnection()).thenReturn(connection);
-        when(connection.prepareStatement(insert)).thenReturn(preparedStatement);
+        when(connection.prepareStatement(INSERT_USER)).thenReturn(preparedStatement);
         when(preparedStatement.executeUpdate()).thenThrow(new SQLException());
 
         daoUser.insertUser(user);
@@ -71,13 +67,13 @@ public class DaoUserImplTest {
     @Test
     public void test_insertUser_ok() throws SQLException, AppException {
         when(worker.getNewConnection()).thenReturn(connection);
-        when(connection.prepareStatement(insert)).thenReturn(preparedStatement);
+        when(connection.prepareStatement(INSERT_USER)).thenReturn(preparedStatement);
         when(preparedStatement.executeUpdate()).thenReturn(3);
 
         daoUser.insertUser(user);
 
         verify(worker).getNewConnection();
-        verify(connection).prepareStatement(insert);
+        verify(connection).prepareStatement(INSERT_USER);
         verify(preparedStatement).setString(1, user.getLogin());
         verify(preparedStatement).setInt(2, user.getPassword());
         verify(preparedStatement).setDate(3, new Date(user.getDate().getTime()));
@@ -98,7 +94,7 @@ public class DaoUserImplTest {
     public void test_getUserByName_get_statement_failed() throws AppException, SQLException {
         String login = "login";
         when(worker.getNewConnection()).thenReturn(connection);
-        when(connection.prepareStatement(getUserByLogin)).thenThrow(new SQLException());
+        when(connection.prepareStatement(SELECT_USER_BY_LOGIN)).thenThrow(new SQLException());
 
         daoUser.getUserByName(login);
 
@@ -109,7 +105,7 @@ public class DaoUserImplTest {
     public void test_getUserByName_get_execute_query_failed() throws AppException, SQLException {
         String login = "login";
         when(worker.getNewConnection()).thenReturn(connection);
-        when(connection.prepareStatement(getUserByLogin)).thenReturn(preparedStatement);
+        when(connection.prepareStatement(SELECT_USER_BY_LOGIN)).thenReturn(preparedStatement);
         when(preparedStatement.executeQuery()).thenThrow(new SQLException());
 
         daoUser.getUserByName(login);
@@ -142,7 +138,7 @@ public class DaoUserImplTest {
         String newLogin = "newLogin";
         this.conditions_for_getUserByName_get_null();
         when(worker.getNewConnection()).thenReturn(connection);
-        when(connection.prepareStatement(updateLogin)).thenThrow(new SQLException());
+        when(connection.prepareStatement(UPDATE_LOGIN)).thenThrow(new SQLException());
 
         daoUser.updateLogin(user, newLogin);
 
@@ -164,7 +160,7 @@ public class DaoUserImplTest {
     public void test_updateLogin_ok() throws SQLException, AppException {
         String newLogin = "newLogin";
         this.conditions_for_getUserByName_get_null();
-        when(connection.prepareStatement(updateLogin)).thenReturn(preparedStatement);
+        when(connection.prepareStatement(UPDATE_LOGIN)).thenReturn(preparedStatement);
 
         daoUser.updateLogin(user, newLogin);
 
@@ -182,7 +178,7 @@ public class DaoUserImplTest {
     @Test(expected = AppException.class)
     public void test_updatePassword_get_statement_failed() throws SQLException, AppException {
         when(worker.getNewConnection()).thenReturn(connection);
-        when(connection.prepareStatement(updatePassword)).thenThrow(new SQLException());
+        when(connection.prepareStatement(UPDATE_PASSWORD)).thenThrow(new SQLException());
 
         daoUser.updatePassword(user, "newPassword".hashCode());
 
@@ -193,12 +189,12 @@ public class DaoUserImplTest {
     public void test_updatePassword_ok() throws SQLException, AppException {
         int newPassword = "newPassword".hashCode();
         when(worker.getNewConnection()).thenReturn(connection);
-        when(connection.prepareStatement(updatePassword)).thenReturn(preparedStatement);
+        when(connection.prepareStatement(UPDATE_PASSWORD)).thenReturn(preparedStatement);
 
         daoUser.updatePassword(user, newPassword);
 
         verify(worker).getNewConnection();
-        verify(connection).prepareStatement(updatePassword);
+        verify(connection).prepareStatement(UPDATE_PASSWORD);
         verify(preparedStatement).setInt(1, newPassword);
         verify(preparedStatement).setString(2, user.getLogin());
         verify(preparedStatement).executeUpdate();
@@ -219,14 +215,69 @@ public class DaoUserImplTest {
         assertThat(daoUser.contains("login"), is(true));
     }
     
+    @Test(expected = AppException.class)
+    public void test_getAllUsers_connection_failed() throws AppException, SQLException {
+        when(worker.getNewConnection()).thenThrow(new SQLException());
+        daoUser.getAllUsers();
+    }
+
+    @Test(expected = AppException.class)
+    public void test_getAllUsers_get_statement_failed() throws AppException, SQLException {
+        when(worker.getNewConnection()).thenReturn(connection);
+        when(connection.prepareStatement(SELECT_ALL_USERS)).thenThrow(new SQLException());
+
+        daoUser.getAllUsers();
+
+        verify(connection).close();
+    }
+
     @Test
-    public void test_getSetFromResultSet() {
-        // TODO: 29.08.2020  
+    public void test_getAllUsers_ok() throws AppException, SQLException {
+        when(worker.getNewConnection()).thenReturn(connection);
+        when(connection.prepareStatement(SELECT_ALL_USERS)).thenReturn(preparedStatement);
+        when(preparedStatement.executeQuery()).thenReturn(resultSet);
+
+        daoUser.getAllUsers();
+
+        verify(preparedStatement).executeQuery();
+        verify(resultSet).next();
+        verify(resultSet).close();
+        verify(preparedStatement).close();
+        verify(connection).close();
+    }
+
+    @Test(expected = AppException.class)
+    public void test_deleteUser_connection_failed() throws AppException, SQLException {
+        when(worker.getNewConnection()).thenThrow(new SQLException());
+        daoUser.deleteUser(user);
+    }
+
+    @Test(expected = AppException.class)
+    public void test_deleteUser_get_statement_failed() throws AppException, SQLException {
+        when(worker.getNewConnection()).thenReturn(connection);
+        when(connection.prepareStatement(DELETE_USER)).thenThrow(new SQLException());
+
+        daoUser.deleteUser(user);
+
+        verify(connection).close();
+    }
+
+    @Test
+    public void test_deleteUser_d() throws AppException, SQLException {
+        when(worker.getNewConnection()).thenReturn(connection);
+        when(connection.prepareStatement(DELETE_USER)).thenReturn(preparedStatement);
+
+        daoUser.deleteUser(user);
+
+        verify(preparedStatement).setString(1, user.getLogin());
+        verify(preparedStatement).executeUpdate();
+        verify(connection).close();
+        verify(preparedStatement).close();
     }
 
     private void conditions_for_getUserByName_get_user() throws SQLException {
         when(worker.getNewConnection()).thenReturn(connection);
-        when(connection.prepareStatement(getUserByLogin)).thenReturn(preparedStatement);
+        when(connection.prepareStatement(SELECT_USER_BY_LOGIN)).thenReturn(preparedStatement);
         when(preparedStatement.executeQuery()).thenReturn(resultSet);
         when(resultSet.next()).thenReturn(true);
         when(resultSet.getInt("id")).thenReturn(1);
@@ -237,7 +288,7 @@ public class DaoUserImplTest {
 
     private void conditions_for_getUserByName_get_null() throws SQLException {
         when(worker.getNewConnection()).thenReturn(connection);
-        when(connection.prepareStatement(getUserByLogin)).thenReturn(preparedStatement);
+        when(connection.prepareStatement(SELECT_USER_BY_LOGIN)).thenReturn(preparedStatement);
         when(preparedStatement.executeQuery()).thenReturn(resultSet);
         when(resultSet.next()).thenReturn(false);
     }

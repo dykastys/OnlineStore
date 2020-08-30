@@ -13,16 +13,19 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static ru.kush.path_helper.ConstantsForPathsToJsp.ALL_PRODUCTS_URL;
+import static ru.kush.path_helper.ConstantsForPathsToJsp.ERROR_404_JSP;
+
 public class AllProductsFilter extends AbstractFilter {
 
     @EJB
-    private DaoProduct daoProduct;
+    DaoProduct daoProduct;
 
     @Override
     void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException {
         String page = request.getParameter("page");
         if(page == null) {
-            request.getRequestDispatcher("/all_products?page=1").forward(request, response);
+            request.getRequestDispatcher(ALL_PRODUCTS_URL).forward(request, response);
         }else{
             try{
                 int intPage = Integer.parseInt(page);
@@ -32,12 +35,12 @@ public class AllProductsFilter extends AbstractFilter {
                 filterChain.doFilter(request, response);
             }catch (IllegalArgumentException | AppException  e) {
                 // TODO: 22.08.2020 log
-                request.getRequestDispatcher("404error.jsp").forward(request, response);
+                request.getRequestDispatcher(ERROR_404_JSP).forward(request, response);
             }
         }
     }
 
-    private List<Integer> getAvailablePages() {
+    List<Integer> getAvailablePages() {
         int countOfPages = daoProduct.getBaseSize()%10 == 0
                 ?
                 daoProduct.getBaseSize() / 10

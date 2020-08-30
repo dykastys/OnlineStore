@@ -13,6 +13,8 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import static ru.kush.dao.jdbc_dao.dao_user.user_queries.UserQueriesConstants.*;
+
 @Singleton
 public class DaoUserImpl implements DaoUser {
 
@@ -22,9 +24,7 @@ public class DaoUserImpl implements DaoUser {
     @Override
     public void insertUser(User user) throws AppException {
         try(Connection connection = worker.getNewConnection();
-            PreparedStatement statement = connection.prepareStatement(
-                    "insert into users (login, password, date) " +
-                                                        "values (?,?,?)")) {
+            PreparedStatement statement = connection.prepareStatement(INSERT_USER)) {
             statement.setString(1, user.getLogin());
             statement.setInt(2, user.getPassword());
             statement.setDate(3, new java.sql.Date(user.getDate().getTime()));
@@ -38,7 +38,7 @@ public class DaoUserImpl implements DaoUser {
     public void updateLogin(User user, String newLogin) throws AppException {
         if(getUserByName(newLogin) == null) {
             try(Connection connection = worker.getNewConnection();
-                PreparedStatement statement = connection.prepareStatement("update users set login=? where login=?")) {
+                PreparedStatement statement = connection.prepareStatement(UPDATE_LOGIN)) {
                 statement.setString(1, newLogin);
                 statement.setString(2, user.getLogin());
                 statement.executeUpdate();
@@ -54,7 +54,7 @@ public class DaoUserImpl implements DaoUser {
     @Override
     public void updatePassword(User user, int password) throws AppException {
         try(Connection connection = worker.getNewConnection();
-            PreparedStatement statement = connection.prepareStatement("update users set password=? where login=?")) {
+            PreparedStatement statement = connection.prepareStatement(UPDATE_PASSWORD)) {
             statement.setInt(1, password);
             statement.setString(2, user.getLogin());
             statement.executeUpdate();
@@ -67,7 +67,7 @@ public class DaoUserImpl implements DaoUser {
     @Override
     public Set<User> getAllUsers() throws AppException {
         try(Connection connection = worker.getNewConnection();
-            PreparedStatement statement = connection.prepareStatement("select * from users")) {
+            PreparedStatement statement = connection.prepareStatement(SELECT_ALL_USERS)) {
             return getSetFromResultSet(statement.executeQuery());
         }catch (SQLException e) {
             throw new AppException(e.getMessage(), e);
@@ -77,8 +77,7 @@ public class DaoUserImpl implements DaoUser {
     @Override
     public User getUserByName(String login) throws AppException {
         try(Connection connection = worker.getNewConnection();
-            PreparedStatement statement = connection.prepareStatement("" +
-                    "select * from users where login=?")) {
+            PreparedStatement statement = connection.prepareStatement(SELECT_USER_BY_LOGIN)) {
             statement.setString(1, login);
             return getUserFromResultSet(statement.executeQuery());
         }catch (SQLException e) {
@@ -89,8 +88,7 @@ public class DaoUserImpl implements DaoUser {
     @Override
     public Set<User> getUsersByDateRange(Date begin, Date end) throws AppException {
         try(Connection connection = worker.getNewConnection();
-            PreparedStatement statement = connection.prepareStatement(
-                    "select * from users where date>=? and date<=?")) {
+            PreparedStatement statement = connection.prepareStatement(SELECT_USER_BY_DATE_RANGE)) {
             statement.setDate(1, new java.sql.Date(begin.getTime()));
             statement.setDate(2, new java.sql.Date(end.getTime()));
             return getSetFromResultSet(statement.executeQuery());
@@ -114,6 +112,7 @@ public class DaoUserImpl implements DaoUser {
             user.setDate(resultSet.getDate("date"));
             users.add(user);
         }
+        resultSet.close();
         return users;
     }
 
@@ -133,8 +132,7 @@ public class DaoUserImpl implements DaoUser {
     @Override
     public void deleteUser(User user) throws AppException {
         try(Connection connection = worker.getNewConnection();
-            PreparedStatement statement = connection.prepareStatement(
-                                    "delete from users where login=?")) {
+            PreparedStatement statement = connection.prepareStatement(DELETE_USER)) {
             statement.setString(1, user.getLogin());
             statement.executeUpdate();
         }catch (SQLException e) {

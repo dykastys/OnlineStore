@@ -12,6 +12,7 @@ public interface DaoUser {
     void updateLogin(User user, String newLogin) throws AppException;
     void updatePassword(User user, int password) throws AppException;
 
+    // TODO: 30.08.2020 why is it yellow
     Set<User> getAllUsers() throws AppException;
     User getUserByName(String name) throws AppException;
     Set<User> getUsersByDateRange(Date begin, Date end) throws AppException;

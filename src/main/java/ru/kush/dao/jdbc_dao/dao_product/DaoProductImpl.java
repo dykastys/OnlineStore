@@ -3,7 +3,7 @@ package ru.kush.dao.jdbc_dao.dao_product;
 import ru.kush.dao.DaoProduct;
 import ru.kush.dao.exceptions.AppException;
 import ru.kush.dao.exceptions.AppIllegalArgException;
-import ru.kush.dao.jdbc_dao.worker.JdbcWorkerImpl;
+import ru.kush.dao.jdbc_dao.worker.JdbcWorker;
 import ru.kush.entities.Product;
 
 import javax.ejb.EJB;
@@ -12,19 +12,22 @@ import java.sql.*;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static ru.kush.dao.jdbc_dao.dao_product.product_queries.ProductQueriesConstants.*;
+
 @Singleton
 public class DaoProductImpl implements DaoProduct {
 
+    // TODO: 29.08.2020 do right setUp 
     private final AtomicInteger baseSize = new AtomicInteger(12);
 
     @EJB
-    private JdbcWorkerImpl worker;
+    JdbcWorker worker;
 
     @Override
     public void insertOrUpdateProduct(Product product) throws AppException {
         try(Connection connection = worker.getNewConnection()) {
             if(contains(product)) {
-                Product updatable = getProductById(product.getId());
+                Product updatable = selectProductById(product.getId());
                 new UpdateClass().update(connection, updatable, product);
             }else{
                 new UpdateClass().insertProduct(connection, product);
@@ -36,12 +39,17 @@ public class DaoProductImpl implements DaoProduct {
     }
 
     @Override
-    public Product getProductById(int id) throws AppException {
+    public Product selectProductById(int id) throws AppException {
         try(Connection connection = worker.getNewConnection();
-            PreparedStatement statement = connection.prepareStatement(
-                    "select * from products where id=?")) {
+            PreparedStatement statement = connection.prepareStatement(SELECT_BY_ID)) {
             statement.setInt(1, id);
-            return getListFromResultSet(statement.executeQuery()).get(0);
+            ResultSet resultSet = statement.executeQuery();
+            List<Product> products = getListFromResultSet(resultSet);
+            if(products.size() == 0) {
+                return null;
+            }else{
+                return products.get(0);
+            }
         }catch (SQLException | IndexOutOfBoundsException e) {
             throw new AppException(e.getMessage(), e);
         }
@@ -49,25 +57,18 @@ public class DaoProductImpl implements DaoProduct {
 
     @Override
     public List<Product> getProductsByName(String nameProduct) throws AppException {
-        try(Connection connection = worker.getNewConnection();
-            PreparedStatement statement = connection
-                    .prepareStatement("select * from products " +
-                                                        "where name = ?")) {
-            statement.setString(1, nameProduct);
-            ResultSet resultSet = statement.executeQuery();
-            return getListFromResultSet(resultSet);
-        }catch (SQLException e) {
-            throw new AppException(e.getMessage(), e);
-        }
+        return getProducts(nameProduct, SELECT_BY_NAME);
     }
 
     @Override
     public List<Product> getProductsByMaker(String maker) throws AppException{
+        return getProducts(maker, SELECT_BY_MAKER);
+    }
+
+    private List<Product> getProducts(String nameOrMaker, String select) throws AppException {
         try(Connection connection = worker.getNewConnection();
-            PreparedStatement statement = connection
-                    .prepareStatement("select * from products " +
-                            "where maker = ?")) {
-            statement.setString(1, maker);
+            PreparedStatement statement = connection.prepareStatement(select)) {
+            statement.setString(1, nameOrMaker);
             ResultSet resultSet = statement.executeQuery();
             return getListFromResultSet(resultSet);
         }catch (SQLException e) {
@@ -78,10 +79,7 @@ public class DaoProductImpl implements DaoProduct {
     @Override
     public List<Product> getProductsByPriceRange(long start, long end) throws AppException {
         try(Connection connection = worker.getNewConnection();
-            PreparedStatement statement = connection
-                    .prepareStatement("select * from products " +
-                                                            "where price >= ? " +
-                                                                    "and price <= ?")) {
+            PreparedStatement statement = connection.prepareStatement(SELECT_BY_PRICE_RANGE)) {
             statement.setLong(1, start);
             statement.setLong(2, end);
             ResultSet resultSet = statement.executeQuery();
@@ -91,14 +89,13 @@ public class DaoProductImpl implements DaoProduct {
         }
     }
 
-
     @Override
     public List<Product> getProductsForPage(int page) throws IllegalArgumentException, AppException {
         List<Product> allProducts = getAllProducts();
         int begin = (page - 1) * 10;
         int end = Math.min(page * 10, allProducts.size());
         try{
-            return getAllProducts().subList(begin, end);
+            return allProducts.subList(begin, end);
         }catch (Exception e) {
             throw new AppIllegalArgException(e.getMessage(), e);
         }
@@ -108,7 +105,7 @@ public class DaoProductImpl implements DaoProduct {
     public List<Product> getAllProducts() throws AppException {
         try(Connection connection = worker.getNewConnection();
             Statement statement = connection.createStatement()) {
-            ResultSet resultSet = statement.executeQuery("select * from products");
+            ResultSet resultSet = statement.executeQuery(SELECT_ALL);
             return getListFromResultSet(resultSet);
         }catch (SQLException e) {
             throw new AppException(e.getMessage(), e);
@@ -122,8 +119,7 @@ public class DaoProductImpl implements DaoProduct {
                 deleteProductById(p.getId());
             }else{
                 try(Connection connection = worker.getNewConnection();
-                    PreparedStatement statement = connection.prepareStatement("delete from products " +
-                                                            "where name = ? and maker = ? and price = ?")) {
+                    PreparedStatement statement = connection.prepareStatement(DELETE_PRODUCT)) {
                     statement.setString(1, p.getName());
                     statement.setString(2, p.getMaker());
                     statement.setLong(3, p.getPrice());
@@ -139,7 +135,7 @@ public class DaoProductImpl implements DaoProduct {
     @Override
     public void deleteProductById(int id) throws AppException {
         try(Connection connection = worker.getNewConnection();
-            PreparedStatement statement = connection.prepareStatement("delete from products where id = ?")) {
+            PreparedStatement statement = connection.prepareStatement(DELETE_BY_ID)) {
             statement.setInt(1, id);
             statement.executeUpdate();
             this.baseSize.decrementAndGet();
@@ -150,7 +146,7 @@ public class DaoProductImpl implements DaoProduct {
 
     @Override
     public boolean contains(Product product) throws AppException {
-        return product.getId() >= 0 && selectProductById(product.getId()) != null;
+        return product.getId() > 0 && selectProductById(product.getId()) != null;
     }
 
     @Override
@@ -158,18 +154,7 @@ public class DaoProductImpl implements DaoProduct {
         return this.baseSize.get();
     }
 
-    private Product selectProductById(int id) throws AppException {
-        try(Connection connection = worker.getNewConnection();
-            PreparedStatement statement = connection.prepareStatement("select * from products where id = ?")) {
-            statement.setInt(1, id);
-            ResultSet resultSet = statement.executeQuery();
-            return getListFromResultSet(resultSet).get(0);
-        }catch (SQLException | IndexOutOfBoundsException e) {
-            throw new AppException(e.getMessage(), e);
-        }
-    }
-
-    private List<Product> getListFromResultSet(ResultSet resultSet) throws SQLException {
+    List<Product> getListFromResultSet(ResultSet resultSet) throws SQLException {
         List<Product> products = new ArrayList<>();
         while (resultSet.next()) {
             Product product = new Product();
@@ -189,9 +174,7 @@ public class DaoProductImpl implements DaoProduct {
     private static class UpdateClass {
 
         public void insertProduct(Connection connection, Product product) throws SQLException {
-            PreparedStatement statement = connection
-                    .prepareStatement("insert into products (name, maker, quantity, price) " +
-                            "values (?,?,?,?)");
+            PreparedStatement statement = connection.prepareStatement(INSERT);
             statement.setString(1, product.getName());
             statement.setString(2, product.getMaker());
             statement.setInt(3, product.getQuantity());
@@ -216,7 +199,7 @@ public class DaoProductImpl implements DaoProduct {
         }
 
         private void updateName(Connection connection, String targetName, int id) throws SQLException {
-            PreparedStatement statement = connection.prepareStatement("update products set name = ? where id = ?");
+            PreparedStatement statement = connection.prepareStatement(UPDATE_NAME);
             statement.setString(1, targetName);
             statement.setInt(2, id);
             statement.executeUpdate();
@@ -224,7 +207,7 @@ public class DaoProductImpl implements DaoProduct {
         }
 
         private void updateMaker(Connection connection, String targetMaker, int id) throws SQLException {
-            PreparedStatement statement = connection.prepareStatement("update products set maker = ? where id = ?");
+            PreparedStatement statement = connection.prepareStatement(UPDATE_MAKER);
             statement.setString(1, targetMaker);
             statement.setInt(2, id);
             statement.executeUpdate();
@@ -232,7 +215,7 @@ public class DaoProductImpl implements DaoProduct {
         }
 
         private void updatePrice(Connection connection, long targetPrice, int id) throws SQLException {
-            PreparedStatement statement = connection.prepareStatement("update products set price = ? where id = ?");
+            PreparedStatement statement = connection.prepareStatement(UPDATE_PRICE);
             statement.setLong(1, targetPrice);
             statement.setInt(2, id);
             statement.executeUpdate();
@@ -240,7 +223,7 @@ public class DaoProductImpl implements DaoProduct {
         }
 
         private void updateQuantity(Connection connection, int targetQuantity, int id) throws SQLException {
-            PreparedStatement statement = connection.prepareStatement("update products set quantity = ? where id = ?");
+            PreparedStatement statement = connection.prepareStatement(UPDATE_QUANTITY);
             statement.setInt(1, targetQuantity);
             statement.setInt(2, id);
             statement.executeUpdate();

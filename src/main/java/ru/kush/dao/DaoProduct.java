@@ -9,7 +9,7 @@ public interface DaoProduct {
 
     void insertOrUpdateProduct(Product product) throws AppException;
 
-    Product getProductById(int id) throws AppException;
+    Product selectProductById(int id) throws AppException;
     List<Product> getProductsByName(String nameProduct) throws AppException;
     List<Product> getProductsByMaker(String maker) throws AppException;
     List<Product> getProductsByPriceRange(long start, long end) throws AppException;

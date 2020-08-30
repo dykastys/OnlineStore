@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-import static ru.kush.controllers.path_helper.ConstantsForPathsToJsp.*;
+import static ru.kush.path_helper.ConstantsForPathsToJsp.*;
 
 public class AuthorizationController extends HttpServlet {
 

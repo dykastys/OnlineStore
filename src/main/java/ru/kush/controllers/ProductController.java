@@ -11,6 +11,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+import static ru.kush.path_helper.ConstantsForPathsToJsp.ERROR_404_JSP;
+import static ru.kush.path_helper.ConstantsForPathsToJsp.PRODUCT_JSP;
+
 public class ProductController extends HttpServlet {
 
     @EJB
@@ -20,11 +23,11 @@ public class ProductController extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String productId = req.getParameter("id");
         try{
-            Product product = this.daoProduct.getProductById(Integer.parseInt(productId));
+            Product product = this.daoProduct.selectProductById(Integer.parseInt(productId));
             req.setAttribute("prod", product);
-            req.getRequestDispatcher("/jsp/product.jsp").forward(req, resp);
+            req.getRequestDispatcher(PRODUCT_JSP).forward(req, resp);
         }catch (IllegalArgumentException | AppException e) {
-            req.getRequestDispatcher("/jsp/errors/404error.jsp").forward(req, resp);
+            req.getRequestDispatcher(ERROR_404_JSP).forward(req, resp);
         }
     }
 }
