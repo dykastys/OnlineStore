@@ -19,8 +19,8 @@ import java.util.List;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.*;
-import static ru.kush.path_helper.ConstantsForPathsToJsp.ALL_PRODUCTS_URL;
-import static ru.kush.path_helper.ConstantsForPathsToJsp.ERROR_404_JSP;
+import static ru.kush.additionals.path_helper.ConstantsForPathsToJsp.ALL_PRODUCTS_URL;
+import static ru.kush.additionals.path_helper.ConstantsForPathsToJsp.ERROR_404_JSP;
 
 public class AllProductsFilterTest {
 

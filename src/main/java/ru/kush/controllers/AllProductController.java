@@ -6,7 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-import static ru.kush.path_helper.ConstantsForPathsToJsp.ALL_PRODUCTS_JSP;
+import static ru.kush.additionals.path_helper.ConstantsForPathsToJsp.ALL_PRODUCTS_JSP;
 
 public class AllProductController extends HttpServlet {
 

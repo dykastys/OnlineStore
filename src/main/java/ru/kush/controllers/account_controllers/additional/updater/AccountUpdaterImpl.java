@@ -1,5 +1,6 @@
 package ru.kush.controllers.account_controllers.additional.updater;
 
+import org.apache.log4j.Logger;
 import ru.kush.controllers.account_controllers.additional.message_maker.MessageMaker;
 import ru.kush.dao.DaoUser;
 import ru.kush.dao.exceptions.AppException;
@@ -12,6 +13,8 @@ import javax.servlet.http.HttpServletRequest;
 
 @Singleton
 public class AccountUpdaterImpl implements AccountUpdater {
+
+    private final Logger logger = Logger.getLogger(AccountUpdaterImpl.class);
 
     @EJB
     DaoUser daoUser;
@@ -44,6 +47,7 @@ public class AccountUpdaterImpl implements AccountUpdater {
         try{
             daoUser.updateLogin(user, login);
         }catch (AppException e) {
+            logger.error("dao cannot update login", e);
             throw new AppSystemError(e.getMessage(), e);
         }
     }
@@ -64,6 +68,7 @@ public class AccountUpdaterImpl implements AccountUpdater {
         try{
             daoUser.updatePassword(user, pass);
         }catch (AppException e) {
+            logger.error("dao cannot update login", e);
             throw new AppSystemError(e.getMessage(), e);
         }
     }

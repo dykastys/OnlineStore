@@ -1,5 +1,6 @@
 package ru.kush.controllers.account_controllers;
 
+import org.apache.log4j.Logger;
 import ru.kush.controllers.account_controllers.additional.checker.Checker;
 import ru.kush.dao.DaoUser;
 import ru.kush.dao.exceptions.AppException;
@@ -12,9 +13,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-import static ru.kush.path_helper.ConstantsForPathsToJsp.*;
+import static ru.kush.additionals.path_helper.ConstantsForPathsToJsp.*;
 
 public class CreateAccountController extends HttpServlet {
+
+    private final Logger logger = Logger.getLogger(CreateAccountController.class);
 
     @EJB
     Checker checker;
@@ -42,7 +45,7 @@ public class CreateAccountController extends HttpServlet {
             req.getSession(true).setAttribute("user", user);
             req.getRequestDispatcher(MAIN_PAGE_JSP).forward(req, resp);
         }catch (AppException e) {
-            // TODO: 25.08.2020 log
+            logger.error("error during creation new account", e);
             req.getRequestDispatcher(SOMETHING_WRONG_JSP).forward(req, resp);
         }
     }

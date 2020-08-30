@@ -1,5 +1,6 @@
 package ru.kush.controllers;
 
+import org.apache.log4j.Logger;
 import ru.kush.dao.DaoProduct;
 import ru.kush.dao.exceptions.AppException;
 import ru.kush.entities.Product;
@@ -11,10 +12,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-import static ru.kush.path_helper.ConstantsForPathsToJsp.ERROR_404_JSP;
-import static ru.kush.path_helper.ConstantsForPathsToJsp.PRODUCT_JSP;
+import static ru.kush.additionals.path_helper.ConstantsForPathsToJsp.ERROR_404_JSP;
+import static ru.kush.additionals.path_helper.ConstantsForPathsToJsp.PRODUCT_JSP;
 
 public class ProductController extends HttpServlet {
+
+    private final Logger logger = Logger.getLogger(ProductController.class);
 
     @EJB
     private DaoProduct daoProduct;
@@ -27,6 +30,7 @@ public class ProductController extends HttpServlet {
             req.setAttribute("prod", product);
             req.getRequestDispatcher(PRODUCT_JSP).forward(req, resp);
         }catch (IllegalArgumentException | AppException e) {
+            logger.error(String.format("error during getting product by id - %s", productId), e);
             req.getRequestDispatcher(ERROR_404_JSP).forward(req, resp);
         }
     }

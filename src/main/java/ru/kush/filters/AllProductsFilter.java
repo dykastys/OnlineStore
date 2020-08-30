@@ -1,5 +1,6 @@
 package ru.kush.filters;
 
+import org.apache.log4j.Logger;
 import ru.kush.dao.DaoProduct;
 import ru.kush.dao.exceptions.AppException;
 import ru.kush.entities.Product;
@@ -13,10 +14,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static ru.kush.path_helper.ConstantsForPathsToJsp.ALL_PRODUCTS_URL;
-import static ru.kush.path_helper.ConstantsForPathsToJsp.ERROR_404_JSP;
+import static ru.kush.additionals.path_helper.ConstantsForPathsToJsp.ALL_PRODUCTS_URL;
+import static ru.kush.additionals.path_helper.ConstantsForPathsToJsp.ERROR_404_JSP;
 
 public class AllProductsFilter extends AbstractFilter {
+
+    private final Logger logger = Logger.getLogger(AllProductsFilter.class);
 
     @EJB
     DaoProduct daoProduct;
@@ -34,7 +37,7 @@ public class AllProductsFilter extends AbstractFilter {
                 request.setAttribute("pages", getAvailablePages());
                 filterChain.doFilter(request, response);
             }catch (IllegalArgumentException | AppException  e) {
-                // TODO: 22.08.2020 log
+                logger.error(String.format("error during getting page - %s, or getting products on page", page), e);
                 request.getRequestDispatcher(ERROR_404_JSP).forward(request, response);
             }
         }

@@ -15,8 +15,8 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
 import static org.mockito.Mockito.*;
-import static ru.kush.path_helper.ConstantsForPathsToJsp.SOMETHING_WRONG_JSP;
-import static ru.kush.path_helper.ConstantsForPathsToJsp.UPDATE_USER_JSP;
+import static ru.kush.additionals.path_helper.ConstantsForPathsToJsp.SOMETHING_WRONG_JSP;
+import static ru.kush.additionals.path_helper.ConstantsForPathsToJsp.UPDATE_USER_JSP;
 
 public class UserUpdateControllerTest {
 

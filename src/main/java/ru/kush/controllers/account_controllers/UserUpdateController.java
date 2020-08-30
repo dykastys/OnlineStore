@@ -1,5 +1,6 @@
 package ru.kush.controllers.account_controllers;
 
+import org.apache.log4j.Logger;
 import ru.kush.controllers.account_controllers.additional.updater.AccountUpdater;
 import ru.kush.dao.exceptions.AppException;
 import ru.kush.entities.User;
@@ -12,10 +13,12 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
-import static ru.kush.path_helper.ConstantsForPathsToJsp.SOMETHING_WRONG_JSP;
-import static ru.kush.path_helper.ConstantsForPathsToJsp.UPDATE_USER_JSP;
+import static ru.kush.additionals.path_helper.ConstantsForPathsToJsp.SOMETHING_WRONG_JSP;
+import static ru.kush.additionals.path_helper.ConstantsForPathsToJsp.UPDATE_USER_JSP;
 
 public class UserUpdateController extends HttpServlet {
+
+    private final Logger logger = Logger.getLogger(UserUpdateController.class);
 
     @EJB
     AccountUpdater updater;
@@ -36,13 +39,14 @@ public class UserUpdateController extends HttpServlet {
             try {
                 updater.tryToUpdateAccount(user, login, password1, password2, req);
             } catch (AppException nop) {
-                // TODO: 26.08.2020 log
+                logger.error("error during update account", nop);
                 req.getRequestDispatcher(SOMETHING_WRONG_JSP).forward(req, resp);
                 return;
             }
             req.getRequestDispatcher(UPDATE_USER_JSP).forward(req, resp);
             return;
         }
+        logger.error("session isn't exist");
         req.getRequestDispatcher(SOMETHING_WRONG_JSP).forward(req, resp);
     }
 }

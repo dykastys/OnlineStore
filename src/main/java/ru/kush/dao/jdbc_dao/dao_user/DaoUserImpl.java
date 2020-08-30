@@ -1,5 +1,6 @@
 package ru.kush.dao.jdbc_dao.dao_user;
 
+import org.apache.log4j.Logger;
 import ru.kush.dao.DaoUser;
 import ru.kush.dao.exceptions.AppException;
 import ru.kush.dao.exceptions.AppIllegalArgException;
@@ -18,6 +19,8 @@ import static ru.kush.dao.jdbc_dao.dao_user.user_queries.UserQueriesConstants.*;
 @Singleton
 public class DaoUserImpl implements DaoUser {
 
+    private final Logger logger = Logger.getLogger(DaoUserImpl.class);
+
     @EJB
     JdbcWorker worker;
 
@@ -30,6 +33,7 @@ public class DaoUserImpl implements DaoUser {
             statement.setDate(3, new java.sql.Date(user.getDate().getTime()));
             statement.executeUpdate();
         }catch (SQLException e) {
+            logger.error(String.format("error during inserting user - %s in DB", user), e);
             throw new AppException(e.getMessage(), e);
         }
     }
@@ -44,6 +48,7 @@ public class DaoUserImpl implements DaoUser {
                 statement.executeUpdate();
                 user.setLogin(newLogin);
             }catch (SQLException e) {
+                logger.error(String.format("error during update login - %s (new login - %s)",user.getLogin(),newLogin), e);
                 throw new AppException(e.getMessage(), e);
             }
         }else{
@@ -60,6 +65,7 @@ public class DaoUserImpl implements DaoUser {
             statement.executeUpdate();
             user.setPassword(password);
         }catch (SQLException e) {
+            logger.error(String.format("error during update password - %s (new pass - %s)",user.getPassword(),password), e);
             throw new AppException(e.getMessage(), e);
         }
     }
@@ -70,6 +76,7 @@ public class DaoUserImpl implements DaoUser {
             PreparedStatement statement = connection.prepareStatement(SELECT_ALL_USERS)) {
             return getSetFromResultSet(statement.executeQuery());
         }catch (SQLException e) {
+            logger.error("error during getting all users", e);
             throw new AppException(e.getMessage(), e);
         }
     }
@@ -81,6 +88,7 @@ public class DaoUserImpl implements DaoUser {
             statement.setString(1, login);
             return getUserFromResultSet(statement.executeQuery());
         }catch (SQLException e) {
+            logger.error(String.format("error during getting user by login - %s",login), e);
             throw new AppException(e.getMessage(), e);
         }
     }
@@ -93,6 +101,7 @@ public class DaoUserImpl implements DaoUser {
             statement.setDate(2, new java.sql.Date(end.getTime()));
             return getSetFromResultSet(statement.executeQuery());
         }catch (SQLException e) {
+            logger.error("error during getting users by date range", e);
             throw new AppException(e.getMessage(), e);
         }
     }
@@ -136,6 +145,7 @@ public class DaoUserImpl implements DaoUser {
             statement.setString(1, user.getLogin());
             statement.executeUpdate();
         }catch (SQLException e) {
+            logger.error(String.format("error during deleting user - %s",user), e);
             throw new AppException(e.getMessage(), e);
         }
     }

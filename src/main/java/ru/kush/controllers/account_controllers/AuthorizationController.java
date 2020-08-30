@@ -1,5 +1,6 @@
 package ru.kush.controllers.account_controllers;
 
+import org.apache.log4j.Logger;
 import ru.kush.controllers.account_controllers.additional.checker.Checker;
 import ru.kush.dao.exceptions.AppException;
 import ru.kush.entities.User;
@@ -11,9 +12,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-import static ru.kush.path_helper.ConstantsForPathsToJsp.*;
+import static ru.kush.additionals.path_helper.ConstantsForPathsToJsp.*;
 
 public class AuthorizationController extends HttpServlet {
+
+    private final Logger logger = Logger.getLogger(AuthorizationController.class); 
 
     @EJB
     Checker checker;
@@ -33,7 +36,7 @@ public class AuthorizationController extends HttpServlet {
                 return;
             }
         }catch (AppException e) {
-            // TODO: 25.08.2020 log
+            logger.error("error during authorization", e);
             req.getRequestDispatcher(SOMETHING_WRONG_JSP).forward(req, resp);
             return;
         }

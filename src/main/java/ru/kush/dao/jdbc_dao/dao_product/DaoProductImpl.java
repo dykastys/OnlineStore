@@ -1,5 +1,6 @@
 package ru.kush.dao.jdbc_dao.dao_product;
 
+import org.apache.log4j.Logger;
 import ru.kush.dao.DaoProduct;
 import ru.kush.dao.exceptions.AppException;
 import ru.kush.dao.exceptions.AppIllegalArgException;
@@ -15,6 +16,8 @@ import static ru.kush.dao.jdbc_dao.dao_product.product_queries.ProductQueriesCon
 
 @Singleton
 public class DaoProductImpl implements DaoProduct {
+
+    private final Logger logger = Logger.getLogger(DaoProductImpl.class);
 
     @EJB
     JdbcWorker worker;
