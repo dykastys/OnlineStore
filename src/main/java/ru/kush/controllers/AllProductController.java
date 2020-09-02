@@ -1,6 +1,7 @@
 package ru.kush.controllers;
 
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -8,6 +9,7 @@ import java.io.IOException;
 
 import static ru.kush.additionals.path_helper.ConstantsForPathsToJsp.ALL_PRODUCTS_JSP;
 
+@WebServlet(name = "allProductsController", urlPatterns = "/all_products")
 public class AllProductController extends HttpServlet {
 
     @Override

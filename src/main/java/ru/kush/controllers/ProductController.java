@@ -7,6 +7,7 @@ import ru.kush.entities.Product;
 
 import javax.ejb.EJB;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -15,6 +16,8 @@ import java.io.IOException;
 import static ru.kush.additionals.path_helper.ConstantsForPathsToJsp.ERROR_404_JSP;
 import static ru.kush.additionals.path_helper.ConstantsForPathsToJsp.PRODUCT_JSP;
 
+
+@WebServlet(name = "productController", urlPatterns = "/product")
 public class ProductController extends HttpServlet {
 
     private final Logger logger = Logger.getLogger(ProductController.class);

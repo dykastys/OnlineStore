@@ -8,6 +8,7 @@ import ru.kush.entities.Product;
 import javax.ejb.EJB;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -17,6 +18,7 @@ import java.util.List;
 import static ru.kush.additionals.path_helper.ConstantsForPathsToJsp.ALL_PRODUCTS_URL;
 import static ru.kush.additionals.path_helper.ConstantsForPathsToJsp.ERROR_404_JSP;
 
+@WebFilter(servletNames = "allProductsController")
 public class AllProductsFilter extends AbstractFilter {
 
     private final Logger logger = Logger.getLogger(AllProductsFilter.class);
