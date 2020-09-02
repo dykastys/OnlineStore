@@ -32,6 +32,7 @@ public class DaoProductImpl implements DaoProduct {
                 new UpdateClass().insertProduct(connection, product);
             }
         }catch (SQLException | AppException e) {
+            logger.error(String.format("error during insert or update product - %s", product), e);
             throw new AppException(e.getMessage(), e);
         }
     }
@@ -49,6 +50,7 @@ public class DaoProductImpl implements DaoProduct {
                 return products.get(0);
             }
         }catch (SQLException | IndexOutOfBoundsException e) {
+            logger.error(String.format("error during select product by id - %s", id), e);
             throw new AppException(e.getMessage(), e);
         }
     }
@@ -70,6 +72,7 @@ public class DaoProductImpl implements DaoProduct {
             ResultSet resultSet = statement.executeQuery();
             return getListFromResultSet(resultSet);
         }catch (SQLException e) {
+            logger.error(String.format("error during getting product by name or maker - %s", nameOrMaker), e);
             throw new AppException(e.getMessage(), e);
         }
     }
@@ -83,6 +86,7 @@ public class DaoProductImpl implements DaoProduct {
             ResultSet resultSet = statement.executeQuery();
             return getListFromResultSet(resultSet);
         }catch (SQLException e) {
+            logger.error(String.format("error during getting product by price range - (%s-%s)", start, end), e);
             throw new AppException(e.getMessage(), e);
         }
     }
@@ -95,6 +99,7 @@ public class DaoProductImpl implements DaoProduct {
         try{
             return allProducts.subList(begin, end);
         }catch (Exception e) {
+            logger.error(String.format("error during getting products for page - %s", page), e);
             throw new AppIllegalArgException(e.getMessage(), e);
         }
     }
@@ -106,6 +111,7 @@ public class DaoProductImpl implements DaoProduct {
             ResultSet resultSet = statement.executeQuery(SELECT_ALL);
             return getListFromResultSet(resultSet);
         }catch (SQLException e) {
+            logger.error("error during getting al products", e);
             throw new AppException(e.getMessage(), e);
         }
     }
@@ -123,6 +129,7 @@ public class DaoProductImpl implements DaoProduct {
                     statement.setLong(3, p.getPrice());
                     statement.executeUpdate();
                 }catch (SQLException e) {
+                    logger.error(String.format("error during delete %s", p), e);
                     throw new AppException(e.getMessage(), e);
                 }
             }
@@ -136,6 +143,7 @@ public class DaoProductImpl implements DaoProduct {
             statement.setInt(1, id);
             statement.executeUpdate();
         }catch (SQLException e) {
+            logger.error(String.format("error during delete product by id - %s", id), e);
             throw new AppException(e.getMessage(), e);
         }
     }
@@ -155,6 +163,7 @@ public class DaoProductImpl implements DaoProduct {
             }
             return 0;
         }catch (SQLException e) {
+            logger.error("error during getting size of data base", e);
             throw new AppException(e.getMessage(), e);
         }
     }
